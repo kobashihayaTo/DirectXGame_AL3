@@ -42,6 +42,20 @@ class GameScene {
 	/// </summary>
 	void Draw();
 
+	float viewAngle = 0.0f;
+
+	enum PartId {
+		Root,
+		Spine,
+		Chest,
+		Head,
+		ArmL,
+		ArmR,
+		Hip,
+		LegL,
+		LegR,
+	};
+
   private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -58,8 +72,6 @@ class GameScene {
 	WorldTransform worldTransform_[100];
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
-
-	float viewAngle = 0.0f;
 
 	/// <summary>
 	/// ゲームシーン用
