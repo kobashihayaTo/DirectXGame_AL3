@@ -62,6 +62,7 @@ class GameScene {
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 
+
 	float Angle[10] = {0.0f, 36.0f, 72.0f, 108.0f, 144.0f, 180.0f, 216.0f, 252.0f, 288.0f, 324.0f};
 	/// <summary>
 	/// ゲームシーン用
