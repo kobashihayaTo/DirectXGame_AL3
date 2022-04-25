@@ -21,28 +21,41 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
 	for (size_t i = 0; i < _countof(worldTransform_); i++) {
-
-		for (size_t j = 0; j < _countof(worldTransform_); j++) {
-
-			for (size_t k = 0; k < _countof(worldTransform_); k++) {
-
-				worldTransform_[i][j][k].scale_ = {1.0f, 1.0f, 1.0f};
-
-				//平行移動を設定
-				worldTransform_[i][j][k].translation_ = {
-				  -12.0f + j * 3.0f, -12.0f + i * 3.0f, 0.0f + k * 4.0f};
-
-				//ワールドトランスフォーム初期化
-				worldTransform_[i][j][k].Initialize();
-			}
-		}
+		//ワールドトランスフォーム初期化
+		worldTransform_[i].Initialize();
 	}
 
 	//ビュープロジェクション初期化
 	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+	float rad;
+
+	float add_x;
+	float add_y;
+
+	for (size_t i = 0; i < _countof(worldTransform_); i++) {
+
+		// 度数法を変換
+		rad = Angle[i] * XM_PI / 180.0f;
+
+		//円の位置を割り出す
+		add_x = cos(rad) * 10.0f;
+		add_y = sin(rad) * 10.0f;
+
+		//角度加算
+		Angle[i] += 1.0f;
+
+		//中心座標に位置を加算
+		worldTransform_[i].translation_.x = 0.0f + add_x;
+		worldTransform_[i].translation_.y = 0.0f + add_y;
+
+		//ワールドトランスフォーム初期化
+		worldTransform_[i].UpdateMatrix();
+	}
+}
 
 void GameScene::Draw() {
 
@@ -72,13 +85,7 @@ void GameScene::Draw() {
 	/// </summary>
 	for (size_t i = 0; i < _countof(worldTransform_); i++) {
 
-		for (size_t j = 0; j < _countof(worldTransform_); j++) {
-
-			for (size_t k = 0; k < _countof(worldTransform_); k++) {
-
-				model_->Draw(worldTransform_[i][j][k], viewProjection_, textureHandle_);
-			}
-		}
+		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
 	}
 
 	// 3Dオブジェクト描画後処理
