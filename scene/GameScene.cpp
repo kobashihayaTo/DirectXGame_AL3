@@ -1,8 +1,10 @@
 ﻿#include "GameScene.h"
 #include "TextureManager.h"
 #include <cassert>
+#include <random>
 
 using namespace DirectX;
+using namespace std;
 
 GameScene::GameScene() {}
 
@@ -15,37 +17,34 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 
-	//ファイル名を指定してテクスチャを読み込む
+	//テクスチャ読み込み
 	textureHandle_ = TextureManager::Load("mario.jpg");
 
-	//３Dモデルの生成
-	model_ = Model::Create();
+	for (size_t i = 0; i < _countof(worldTransform_); i++) {
 
-	// X,Y,Z方向のスケーリングを設定
-	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
+		//スケーリングを設定
+		worldTransform_[i].scale_ = {5.0f, 5.0f, 5.0f};
 
-	// X,Y,Z軸周りの回転角を設定
-	worldTransform_.rotation_ = {XM_PI / 4.0f, XM_PI / 4.0f, 0.0f};
+		if (i < 9) { //下
 
-	// X,Y,Z軸回りの平行移動を設定
-	worldTransform_.translation_ = {10.0f, 10.0f, 10.0f};
+			//平行移動を設定
+			worldTransform_[i].translation_ = {-40.0f + i * 10.0f, -20.0f, 0};
 
-	//ワールドトランスフォームの初期化
-	worldTransform_.Initialize();
-	//ビュープロジェクションの初期化
+		} else { //上
+
+			//平行移動を設定
+			worldTransform_[i].translation_ = {-40.0f + (i - 9) * 10.0f, 20.0f, 0};
+		}
+
+		//ワールドトランスフォーム初期化
+		worldTransform_[i].Initialize();
+	}
+
+	//ビュープロジェクション初期化
 	viewProjection_.Initialize();
 }
 
-void GameScene::Update() {
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("translation:(%f,%f,%f)", 10.0f, 10.0f, 10.0f);
-
-	debugText_->SetPos(50, 90);
-	debugText_->Printf("rotation:(%f,%f,%f)", XM_PI / 4.0f, XM_PI / 4.0f, 0.0f);
-
-	debugText_->SetPos(50, 110);
-	debugText_->Printf("scale:(%f,%f,%f)", 10.0f, 10.0f, 10.0f);
-}
+void GameScene::Update() {}
 
 void GameScene::Draw() {
 
@@ -69,12 +68,13 @@ void GameScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	// 3Dオブジェクト描画前処理
 	Model::PreDraw(commandList);
-
+	model_ = Model::Create();
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
-	/// 3Dモデル描画
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	for (size_t i = 0; i < _countof(worldTransform_); i++) {
+		model_->Draw(worldTransform_[i], viewProjection_, textureHandle_);
+	}
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
